@@ -26,7 +26,12 @@ class PolicyExport():
                continue
             self.rql_url = "https://api.redlock.io/search/history/%s" % policydata["rule"]["criteria"]
             rql_resp = self.rl_sess.client.get(self.rql_url)
-            json_rql_resp = rql_resp.json()
+	    try:
+	        rql_resp.json()
+            except ValueError:
+                continue
+            else:
+                json_rql_resp = rql_resp.json()
             data = [policydata["name"],policydata["description"],policydata["cloudType"],json_rql_resp["query"]]
 	    encoded_data = [x.encode('utf-8') for x in data]
             self.csv_writer.append([encoded_data])
