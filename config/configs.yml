@@ -1,4 +1,5 @@
-redlock:
-  username:
+prisma_cloud:
+  username:  
   password: 
-  customer_name: 
+  customer_name:
+  api_base: api.prismacloud.io #default value 

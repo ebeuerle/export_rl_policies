@@ -13,26 +13,27 @@ class RLSession(object):
 
 
 
-    def __init__(self,userid,userpass,customer_name):
-	self.api_id = userid
-	self.api_pass = userpass
-	self.cust_name = customer_name
-	self.auth_token = None
-	self.build_client()
-	return None
+    def __init__(self,userid,userpass,customer_name,api_base):
+        self.api_id = userid
+        self.api_pass = userpass
+        self.cust_name = customer_name
+        self.api_base_url = api_base
+        self.auth_token = None
+        self.build_client()
+        return None
 
     def build_client(self):
-	"""Build client object for class instantiation."""
-	self.client = requests.Session()
-	self.retries = Retry(total=self.max_retries,
+        """Build client object for class instantiation."""
+        self.client = requests.Session()
+        self.retries = Retry(total=self.max_retries,
                              status_forcelist=self.retry_statuses,
                              backoff_factor=1)
-	self.redlock_http_adapter = HTTPAdapter(pool_connections=1,
+        self.redlock_http_adapter = HTTPAdapter(pool_connections=1,
                                                 pool_maxsize=10,
                                                 max_retries=self.retries)
         self.session_mount = "https://"
-	self.client.mount(self.session_mount, self.redlock_http_adapter)
-	return None
+        self.client.mount(self.session_mount, self.redlock_http_adapter)
+        return None
 
     def get_auth_token(self, endpoint, body):
 
@@ -48,14 +49,14 @@ class RLSession(object):
     def authenticate_client(self):
 
         success = False
-        prefix = "https://api.redlock.io"
+        prefix = "https://"  + self.api_base_url
         endpoint = prefix + "/login"
         body = {"username":self.api_id,"password":self.api_pass,"customerName":self.cust_name}
         max_tries = 5
         for _ in range(max_tries):
             token = self.get_auth_token(endpoint, body)
             if token == "BAD":
-                print "Invalid credentials - can not obtain session token."
+                print("Invalid credentials - can not obtain session token.")
             if token is not None:
                 self.auth_token = token
                 success = True
@@ -113,4 +114,4 @@ class RLSession(object):
             response = client_method(url, data=json.dumps(reqbody))
         success, exception = utility.parse_status(url, response.status_code,
                                                   response.text)
-        return success, response, exception	
+        return success, response, exception     

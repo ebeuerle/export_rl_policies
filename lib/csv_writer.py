@@ -5,7 +5,7 @@ class CsvWriter(object):
     @staticmethod
     def write(output):
         filename = "output.csv"
-        with open(filename, "wb") as f:
+        with open(filename, "w") as f:
             writer = csv.writer(f)
             writer.writerows(output)
 
