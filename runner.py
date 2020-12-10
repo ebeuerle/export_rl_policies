@@ -29,8 +29,8 @@ class PolicyExport():
                 rql_query = json_rql_resp["query"]
             else:
                 rql_query = policydata.get('rule').get('criteria')
-            print(policydata['policyId'])
-            print(rql_query)
+#            print(policydata['policyId'])
+#            print(rql_query)
             data = [policydata["name"],policydata["description"],policydata["cloudType"],rql_query]
             encoded_data = [x.encode('utf-8') for x in data]
             self.csv_writer.append([encoded_data])
